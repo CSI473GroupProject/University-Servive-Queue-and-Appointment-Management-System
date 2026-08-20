@@ -28,6 +28,7 @@ To develop a digital system that manages student queues and appointments efficie
 2.  Boikhutso Sugape - 201901809
 3.  Aone Ropane - 202402953
 4.  Phenyo Joseph Mpala - 202401164
+5.  Motoya Keimetswe - 202105048
 
 ## Project Course
 CSI 473 – Software Project

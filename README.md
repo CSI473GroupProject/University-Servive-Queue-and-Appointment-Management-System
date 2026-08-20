@@ -1,5 +1,5 @@
 # University-Servive-Queue-and-Appointment-Management-System
-CSI473 group project.University Servive Queue and Appointment Management System
+CSI473 group 17 project:University Servive Queue and Appointment Management System
 # University of Botswana Service Queue and Appointment Management System
 
 ## Problem Statement

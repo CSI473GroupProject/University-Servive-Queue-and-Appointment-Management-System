@@ -25,6 +25,8 @@ The student selects a registration service and requests to join its virtual queu
 7. The system calculates the student's position in the queue.
 8. The system displays the queue number and current position.
 9. The system stores the student's queue status.
+10. The system calculates the approximate waiting time.
+11. The system displays the waiting time to the student
 
 ## Alternative Flows
 

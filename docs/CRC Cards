@@ -1,0 +1,71 @@
+# CRC Cards (Studio Step 70–92)
+
+
+---
+
+## CRC-01: Student
+
+| Responsibilities | Collaborators |
+|---|---|
+| Join a Virtual Queue for a Registration Service | Virtual Queue, Registration Service |
+| Hold at most one active Queue Entry per Registration Service (BR-04 / one-active-entry rule) | Queue Entry |
+| Book an Appointment against an available Appointment Slot (BR-01) | Appointment, Appointment Slot |
+| Cancel an Appointment, subject to Cancellation Policy (BR-05, BR-08) | Appointment, Cancellation Rule |
+| Receive notification of a Queue Status or Appointment change | Queue Entry, Appointment |
+
+---
+
+## CRC-02: Virtual Queue
+
+| Responsibilities | Collaborators |
+|---|---|
+| Maintain an ordered collection of Queue Entries for one Registration Service | Queue Entry, Registration Service |
+| Track open/closed state and capacity | Registration Service Administrator |
+| Assign Queue Position to each new Queue Entry in join order (BR-06) | Queue Entry |
+| Determine the next eligible Queue Entry to call (Service/call-order Rule) | Queue Entry, Service Rule |
+| Enforce Queue Availability before accepting a new entry (BR-03) | Registration Service |
+
+---
+
+## CRC-03: Queue Entry
+
+| Responsibilities | Collaborators |
+|---|---|
+| Record the Student, Virtual Queue, Queue Number, and Queue Position it belongs to | Student, Virtual Queue |
+| Track its own Queue Status (waiting, called, completed) | Virtual Queue |
+| Transition status when called or completed, and prevent re-entry into an active queue once completed | Registration Staff |
+| Enforce uniqueness of active entry per Student/Service (BR-04) | Student, Registration Service |
+
+---
+
+## CRC-04: Appointment
+
+| Responsibilities | Collaborators |
+|---|---|
+| Link a Student to a specific Appointment Slot | Student, Appointment Slot |
+| Validate availability before booking (BR-01) | Appointment Slot |
+| Prevent a second active Appointment for the same Student/Service (BR-04) | Student, Registration Service |
+| Apply Cancellation Policy on cancellation requests (BR-05, BR-08) | Cancellation Rule |
+| Mark itself completed and become immutable thereafter (BR-08) | Registration Staff |
+
+---
+
+## CRC-05: Appointment Slot
+
+| Responsibilities | Collaborators |
+|---|---|
+| Represent a single bookable time slot for a Registration Service | Registration Service |
+| Report its own availability | Appointment |
+| Prevent being double-booked (BR-02) | Appointment, Registration Staff |
+| Belong to exactly one Service Provider/Registration Staff assignment (BR-07) | Registration Staff |
+
+---
+
+## CRC-06: Registration Staff (Service Provider)
+
+| Responsibilities | Collaborators |
+|---|---|
+| Call the next eligible Queue Entry (FR-10) | Virtual Queue, Queue Entry |
+| Manage Appointments only for their assigned Registration Service (BR-07) | Appointment, Registration Service |
+| Mark a Queue Entry or Appointment as completed | Queue Entry, Appointment |
+| Cannot modify or reopen a completed Appointment (BR-08) | Appointment |

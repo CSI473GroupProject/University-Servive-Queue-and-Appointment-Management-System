@@ -54,11 +54,3 @@ These appeared in the Lab 03 wording but describe **the software's interface, an
 | **Notification delivery channel (SMS/email/push)** | Not stated explicitly, but implied by "Receive Notifications" | If the team's revised requirements specify a channel, that's a technology/integration detail — keep the *event* (student notified), drop the *transport*. |
 
 ---
-
-## 3. Notes for the next studio block (18–50 min)
-
-- You now have enough kept concepts to justify **associations**: Student–Virtual Queue (via Queue Entry), Virtual Queue–Registration Service, Student–Appointment–Appointment Slot, Registration Service–Appointment Slot.
-- Two rows are flagged **borderline** (#15 Notification, #16 Report). Decide on those with your teammates *before* modelling — that decision itself is a good candidate for one of the two required "rationale for a modelling choice" write-ups, or for `decisions/D-002.md`.
-- Composition candidates to test against the "lifetime ownership" rule the brief calls out: does a Virtual Queue *own* its Queue Entries (i.e., does a Queue Entry cease to exist if the Queue is deleted)? Worth a deliberate call rather than a default.
-- You'll likely want to name the call-order policy (#14) explicitly — "FIFO" vs. "priority-based" — since right now it's only implied by FR-10 and the diagram's "Call Next Eligible Student," not stated as a rule.
-

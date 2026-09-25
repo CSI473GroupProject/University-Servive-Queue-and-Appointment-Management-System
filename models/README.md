@@ -1,8 +1,7 @@
 # Lab 07 Evidence — Architecture Alternatives and Component Structure
 
 **Project:** Student Registration Queue Management System — Team 17
-**Team members:** Motoya Keimetswe (202105048), Phenyo Morapedi (202105212), Boikhutso Sugape
-(201901809), Aone Ropane (202402953), Phenyo Joseph Mpala (202401164)
+**Team members:** Motoya Keimetswe (202105048), Phenyo Morapedi (202105212)
 **Branch:** lab-07
 **Date:** 25 September 2026
 

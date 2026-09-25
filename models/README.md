@@ -9,7 +9,7 @@
 
 All evidence below is built directly from Team 17 approved project (Phase 1, approved 13/08/2026):
 the Student Registration Queue Management System, its functional requirements FR-01–FR-10, use cases
-UC-01–UC-18, quality scenarios QS-01–QS-07, business rules BR-01–BR-08, domain model and Phase 1 §8
+UC-01–UC-18, quality scenarios QS-01–QS-07, business rules BR-01–BR-08, domain model and Phase 1 
 architecture work.
 
 ## Evidence index

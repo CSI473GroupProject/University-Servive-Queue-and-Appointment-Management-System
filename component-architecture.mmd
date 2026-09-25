@@ -1,0 +1,76 @@
+%% Student Registration Queue Management System — Team 17
+%% Component/module view — CSI473 Lab 07
+%% Editable source. Readable export: component-architecture.svg
+%% Dependency arrows point in the direction of the call (caller -> callee)
+
+flowchart TB
+
+  subgraph SYS["System boundary — Layered Monolith (ADR-001)"]
+    direction TB
+
+    subgraph PRES["Presentation layer"]
+      direction LR
+      SWI["Student Web/Mobile Interface<br/>UC-01,02,04-08,10 / FR-01-08"]
+      RSD["Registration Staff Dashboard<br/>UC-12-15 / FR-09-10"]
+      AC["Administrator Console<br/>UC-16-18"]
+    end
+
+    AUTH["Authentication & Access Control<br/>(cross-cutting)<br/>QS-03 / AD-03"]
+
+    subgraph APP["Application / service layer"]
+      direction LR
+      QS["Queue Service<br/>UC-02-05 / FR-02-04"]
+      APS["Appointment Service<br/>UC-06-09 / FR-05-08"]
+      NS["Notification Service<br/>UC-11"]
+      SOS["Staff Operations Service<br/>UC-12-15 / FR-09-10"]
+      ADS["Administration Service<br/>UC-16-18"]
+    end
+
+    subgraph DOM["Domain layer"]
+      direction LR
+      ENT["Core entities: Student, RegistrationStaff,<br/>Administrator, RegistrationService, QueueEntry,<br/>Appointment, Slot, Notification<br/>(shared status: Waiting/Called/Served/No-show/Cancelled)"]
+    end
+
+    subgraph DAL["Data access layer"]
+      direction LR
+      QR["QueueRepository"]
+      AR["AppointmentRepository"]
+      SR["ServiceRepository"]
+      UR["UserRepository"]
+    end
+
+    DB[("Relational Database<br/>single datastore — AD-02")]
+
+    SWI --> QS
+    SWI --> APS
+    RSD --> SOS
+    AC --> ADS
+
+    AUTH -. enforces roles before .-> PRES
+    AUTH -. enforces roles before .-> APP
+
+    QS --> ENT
+    APS --> ENT
+    NS --> ENT
+    SOS --> QS
+    SOS --> APS
+    ADS --> ENT
+
+    ENT --> QR
+    ENT --> AR
+    ENT --> SR
+    QR --> DB
+    AR --> DB
+    SR --> DB
+    UR --> DB
+    AUTH --> UR
+  end
+
+  GATEWAY["External: Notification Gateway<br/>(SMS / Email provider)<br/>isolated failure domain — UC-11 fallback"]
+
+  NS -. async, outside trust boundary .-> GATEWAY
+
+  style SYS fill:#f7f7f9,stroke:#7a1f2b,stroke-width:2px
+  style GATEWAY fill:#fff3f3,stroke:#999,stroke-dasharray: 4 3
+  style AUTH fill:#fdecea,stroke:#7a1f2b
+  style DB fill:#eef3ff,stroke:#333

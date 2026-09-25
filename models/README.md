@@ -24,8 +24,8 @@ architecture work.
 ## Exit record
 
 **Which quality requirement most influenced the architecture?**
-**QS-04 (Reliability)** — the requirement that 99.9% of queue-joining transactions (UC-02) be recorded
-correctly, with no data loss or duplication — was the single strongest factor in selecting the layered
+**QS-04 (Reliability)** - the requirement that 99.9% of queue-joining transactions (UC-02) be recorded
+correctly, with no data loss or duplication - was the single strongest factor in selecting the layered
 monolith over microservices. A distributed-transaction split between the Queue Service and Notification
 Service would have put this reliability target at direct risk (see `docs/architecture-options.md`,
 Alternative 2 assessment against AD-02). QS-01/QS-06 (performance/scalability) and QS-03 (security within

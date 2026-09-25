@@ -1,4 +1,4 @@
-# Lab 07 Evidence — Architecture Alternatives and Component Structure
+# Lab 07 Evidence Architecture Alternatives and Component Structure
 
 **Project:** Student Registration Queue Management System - Team 17
 **Team members:** Motoya Keimetswe (202105048), Phenyo Morapedi (202105212)

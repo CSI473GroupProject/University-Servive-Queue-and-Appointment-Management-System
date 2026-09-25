@@ -35,11 +35,10 @@ alternative.
 **What evidence would cause the team to revise the decision?**
 As recorded in ADR-001's reconsideration trigger: measured queue-position response times exceeding the
 QS-01 2-second target, or fewer than 95% of requests completing within 3 seconds at 500 concurrent users
-(QS-06) — specifically when this coincides with UC-18 reporting activity — would indicate the accepted
+(QS-06) - specifically when this coincides with UC-18 reporting activity - would indicate the accepted
 shared-runtime risk has materialised and the reporting workload needs to be isolated, or the architecture
 reconsidered.
 
 ## Commit note
 
-Editable model source (`component-architecture.mmd`) and its readable export (`.svg`) are both committed,
-per the lab requirement that screenshots alone are not acceptable source evidence.
+Editable model source (`component-architecture.mmd`) and its readable export (`.svg`) are both committed.

@@ -2,9 +2,9 @@
 
 **Project:** Student Registration Queue Management System ;Team 17
 **Lab:** CSI473 Laboratory 7
-**202105048 M.W.W Keimetswe 202105048**
+**202105048 M.W.M Keimetswe 202105048**
 **202105212 P Morapedi**
-**Applies to:** Team's own approved project (Phase 1, approved 13/08/2026) — not the University Service Hub example
+**Applies to:**Group 17 Student Registration Queue Management System(Phase 1, approved 13/08/2026).
 
 ## Architecture drivers used as comparison criteria
 

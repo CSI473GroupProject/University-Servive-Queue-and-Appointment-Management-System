@@ -8,9 +8,7 @@
 ## Scope
 
 This document records the integrity constraints enforced by the logical data model
-(`models/logical-data-model.mmd`), how each is protected at the database and application level, and the
-test needed to verify it — closing the loop from Lab 7's architecture to this lab's data/API/deployment
-design.
+(`models/logical-data-model.mmd`)
 
 ## Integrity constraints
 

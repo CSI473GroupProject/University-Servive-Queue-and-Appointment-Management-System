@@ -1,0 +1,138 @@
+openapi: 3.0.3
+info:
+  title: Appointment Service — bookAppointment (core operation)
+  version: "1.0"
+  description: >
+    Core operation contract for CSI473 Lab 08. Specifies UC-06 "Book Appointment"
+    as implemented by the Appointment Service component (component-architecture.mmd,
+    Lab 07). Covers normal and error outcomes, validation, and the business rules
+    enforced. Request/response shapes follow the logical data model
+    (models/logical-data-model.mmd).
+
+paths:
+  /appointments:
+    post:
+      operationId: bookAppointment
+      summary: Reserve an appointment slot for a registration service (UC-06)
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [studentId, slotId]
+              properties:
+                studentId:
+                  type: string
+                  description: Must identify an authenticated, logged-in student (precondition of UC-01/UC-06).
+                slotId:
+                  type: string
+                  description: Must reference an AppointmentSlot returned by a prior checkAvailability call (UC-07).
+
+      responses:
+        "201":
+          description: Appointment booked successfully (UC-06 Main Success Flow, step 4-5).
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  appointmentId: { type: string }
+                  status: { type: string, enum: [Booked] }
+                  slotId: { type: string }
+                  serviceId: { type: string }
+                  slotDate: { type: string, format: date }
+                  startTime: { type: string, format: time }
+                  confirmationSentVia:
+                    type: array
+                    items: { type: string, enum: [in_app, email] }
+                    description: Populated by Notification Service per ADR-004 fallback behaviour (UC-11).
+
+        "400":
+          description: Validation failure — malformed or missing request fields.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+              example:
+                errorCode: VALIDATION_ERROR
+                message: "studentId and slotId are required."
+
+        "404":
+          description: Referenced slot does not exist.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+              example:
+                errorCode: SLOT_NOT_FOUND
+                message: "No appointment slot exists with the given slotId."
+
+        "409":
+          description: >
+            Business-rule failure — the request is well-formed but conflicts with a
+            business rule. Three distinct, stable error codes are returned so the
+            client can react differently to each (UC-06 exceptions 3a, 4a; BR-02, BR-04).
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+              examples:
+                slotUnavailable:
+                  summary: "UC-06 exception 3a — no slots available at time of request"
+                  value:
+                    errorCode: SLOT_UNAVAILABLE
+                    message: "The requested slot is not currently open for booking."
+                slotAlreadyBooked:
+                  summary: "UC-06 exception 4a — race condition, slot taken moments earlier (ADR-003)"
+                  value:
+                    errorCode: SLOT_ALREADY_BOOKED
+                    message: "This slot was booked by another student a moment ago. Please choose another slot."
+                duplicateActiveAppointment:
+                  summary: "BR-04 — student already has an active appointment for this service"
+                  value:
+                    errorCode: DUPLICATE_ACTIVE_APPOINTMENT
+                    message: "You already have an active appointment for this service."
+
+        "423":
+          description: Student account temporarily locked (QS-03) — request rejected before reaching business logic.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+              example:
+                errorCode: ACCOUNT_LOCKED
+                message: "Account locked after repeated failed login attempts. Try again after the lockout period."
+
+components:
+  schemas:
+    ErrorResponse:
+      type: object
+      required: [errorCode, message]
+      properties:
+        errorCode:
+          type: string
+          description: Stable, machine-readable error identifier. Clients should branch on this field, not on the message text.
+        message:
+          type: string
+          description: Human-readable explanation, safe to display to the student.
+
+# ---------------------------------------------------------------------------
+# Validation and business-rule checks performed, in order (maps to
+# AppointmentService.reserveSlot in the Lab 07 sequence diagram):
+#
+# 1. VALIDATION  — studentId and slotId present and well-formed        -> 400 VALIDATION_ERROR
+# 2. AUTH        — student account not locked (QS-03)                  -> 423 ACCOUNT_LOCKED
+# 3. EXISTENCE   — slotId refers to a real AppointmentSlot               -> 404 SLOT_NOT_FOUND
+# 4. AVAILABILITY— slot.slot_status = 'open' AND no active Appointment
+#                  referencing it (BR-01, BR-02)                        -> 409 SLOT_UNAVAILABLE
+# 5. UNIQUENESS  — student has no other Booked/Called appointment for
+#                  the same service (BR-04)                             -> 409 DUPLICATE_ACTIVE_APPOINTMENT
+# 6. RACE CHECK  — re-check slot availability immediately before commit,
+#                  per ADR-003's optimistic concurrency approach         -> 409 SLOT_ALREADY_BOOKED
+# 7. COMMIT      — create Appointment row (status=Booked), set
+#                  AppointmentSlot.slot_status='blocked' for exact slot,
+#                  all within one database transaction (AD-02, QS-04)
+# 8. NOTIFY      — Notification Service sends booking confirmation
+#                  (UC-11), failure here does not roll back the booking
+# ---------------------------------------------------------------------------

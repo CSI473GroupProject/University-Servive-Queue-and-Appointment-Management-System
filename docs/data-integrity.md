@@ -1,7 +1,7 @@
 # Data Integrity — Constraints and Traceability
 
-**Project:** Student Registration Queue Management System — Team 17
-**Lab:** CSI473 Laboratory 8 — Data, API, deployment and failure-aware design
+**Project:** Student Registration Queue Management System — Group 17
+**Lab:** CSI473 Laboratory 8 Data, API, deployment and failure aware design
 **Branch:** lab-08
 **Date:** 2 October 2026
 

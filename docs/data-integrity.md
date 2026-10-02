@@ -1,4 +1,4 @@
-# Data Integrity — Constraints and Traceability
+# Data Integrity; Constraints and Traceability
 
 **Project:** Student Registration Queue Management System Group 17
 **Lab:** CSI473 Laboratory 8 Data, API, deployment and failure aware design

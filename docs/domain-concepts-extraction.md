@@ -1,5 +1,5 @@
-# Candidate Domain Concepts — Extraction & Classification
-**University of Botswana Service Queue and Appointment Management System — CSI473 Lab 04, Studio Step 1 (00–18 min)**
+# Candidate Domain Concepts; Extraction & Classification
+**University of Botswana Service Queue and Appointment Management System CSI473 Lab 04, Studio Step 1 (00–18 min)**
 **Source:** Laboratory 3, Group 17 (functional requirements FR-01–FR-10, actor goals, UC-01 "Join Virtual Queue," acceptance criteria, use case diagram)
 
 This worksheet does two things the brief asks for in the first studio block:

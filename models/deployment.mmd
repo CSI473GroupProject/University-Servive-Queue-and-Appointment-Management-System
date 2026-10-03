@@ -1,0 +1,45 @@
+%% Student Registration Queue Management System — Team 17
+%% Deployment diagram — CSI473 Lab 08
+%% Editable source. Readable export: deployment.svg
+%% Realises the layered monolith selected in ADR-001 (Lab 07)
+
+flowchart TB
+
+  subgraph CLIENTS["Client devices — untrusted network zone"]
+    direction LR
+    SC["Student browser/mobile<br/>(Student Web/Mobile Interface)"]
+    STC["Staff counter workstation<br/>(Registration Staff Dashboard)"]
+    AC["Admin workstation<br/>(Administrator Console)"]
+  end
+
+  subgraph DMZ["TLS boundary — public internet / campus network"]
+    LB["Load balancer / reverse proxy<br/>(TLS termination)"]
+  end
+
+  subgraph APPNODE["Application node(s) — university-hosted, trusted zone"]
+    direction TB
+    WEBAPP["Monolithic application server<br/>(Presentation + Application/service +<br/>Domain + Data access layers — ADR-001)"]
+    AUTHN["Authentication & Access Control<br/>QS-03 / AD-03"]
+  end
+
+  subgraph DATAZONE["Data zone — trusted, restricted network"]
+    DB[("Relational Database<br/>single datastore — AD-02, QS-04")]
+  end
+
+  subgraph EXTZONE["External zone — outside university trust boundary"]
+    GATEWAY["Notification Gateway<br/>(SMS / Email provider)<br/>isolated failure domain — UC-11"]
+  end
+
+  SC -- "HTTPS" --> LB
+  STC -- "HTTPS" --> LB
+  AC -- "HTTPS" --> LB
+  LB -- "HTTPS, internal" --> WEBAPP
+  WEBAPP --> AUTHN
+  WEBAPP -- "DB driver, internal network only" --> DB
+  WEBAPP -- "HTTPS, async, outbound only" --> GATEWAY
+
+  style CLIENTS fill:#fff3f3,stroke:#999,stroke-dasharray: 3 2
+  style DMZ fill:#fff8e8,stroke:#a67a1f
+  style APPNODE fill:#eaf6ea,stroke:#2c6a2c,stroke-width:2px
+  style DATAZONE fill:#eaf2ff,stroke:#2c4a7a,stroke-width:2px
+  style EXTZONE fill:#fff3f3,stroke:#999,stroke-dasharray: 4 3

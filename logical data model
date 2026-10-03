@@ -1,0 +1,81 @@
+%% Student Registration Queue Management System — Team 17
+%% Logical data model — CSI473 Lab 08
+%% Editable source. Readable export: logical-data-model.svg
+%% Derived from Phase 1 §6 Domain Model (multiplicities A-H) — no structural changes, only persistence detail added
+
+erDiagram
+  STUDENT ||--o{ QUEUE_ENTRY : "creates (domain C)"
+  STUDENT ||--o{ APPOINTMENT : "books (domain D)"
+  SERVICE_ADMINISTRATOR ||--o{ REGISTRATION_SERVICE : "configures (domain F)"
+  REGISTRATION_SERVICE ||--o{ VIRTUAL_QUEUE : "has (domain E)"
+  REGISTRATION_SERVICE ||--o{ APPOINTMENT_SLOT : "reserves (domain G)"
+  VIRTUAL_QUEUE ||--o{ QUEUE_ENTRY : "contains (domain B)"
+  APPOINTMENT_SLOT ||--o| APPOINTMENT : "reserves (domain H)"
+  STUDENT ||--o{ NOTIFICATION : "receives (UC-11)"
+
+  STUDENT {
+    string student_id PK
+    string name
+    string email UNIQUE
+    string password_hash
+    int failed_login_count "QS-03 lockout counter"
+    datetime locked_until "QS-03, null if not locked"
+  }
+
+  SERVICE_ADMINISTRATOR {
+    string admin_id PK
+    string name
+  }
+
+  REGISTRATION_SERVICE {
+    string service_id PK
+    string name UNIQUE "active services only - UC-16 BR"
+    string admin_id FK
+    string status "active | inactive"
+  }
+
+  VIRTUAL_QUEUE {
+    string queue_id PK
+    string service_id FK
+    string status "open | closed"
+    int capacity "AF-01 queue full"
+  }
+
+  QUEUE_ENTRY {
+    string entry_id PK
+    string queue_id FK
+    string student_id FK
+    int queue_number "unique per service per day - BR-06, UC-03"
+    string status "Waiting|Called|Served|No-show|Cancelled"
+    datetime created_at "determines position order - BR-06"
+    string counter_id FK "nullable, set on Called - UC-14"
+  }
+
+  APPOINTMENT_SLOT {
+    string slot_id PK
+    string service_id FK
+    date slot_date
+    time start_time
+    time end_time
+    int capacity
+    string slot_status "open | blocked"
+  }
+
+  APPOINTMENT {
+    string appointment_id PK
+    string slot_id FK UNIQUE "BR-02 no double booking"
+    string student_id FK
+    string status "Booked|Called|Served|No-show|Cancelled"
+    datetime created_at
+    string counter_id FK "nullable, set on Called - UC-14"
+  }
+
+  NOTIFICATION {
+    string notification_id PK
+    string student_id FK
+    string event_type "position_change|called|booking_confirmed|cancellation_confirmed"
+    string channel "in_app | email"
+    string delivery_status "queued|sent|failed"
+    datetime created_at
+  }
+

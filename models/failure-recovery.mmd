@@ -1,0 +1,42 @@
+%% Student Registration Queue Management System — Team 17
+%% Failure/recovery flow — CSI473 Lab 08
+%% Editable source. Readable export: failure-recovery.svg
+%% Scenario: two students attempt to book the same AppointmentSlot at nearly
+%% the same instant (UC-06 exception 4a; ADR-003 optimistic concurrency)
+
+sequenceDiagram
+  participant A as Student A
+  participant B as Student B
+  participant AC as AppointmentController
+  participant AS as AppointmentService
+  participant AR as AppointmentRepository
+  participant DB as Database (unique constraint on slot_id)
+  participant NS as NotificationService
+
+  A->>AC: bookAppointment(slotId=S1)
+  B->>AC: bookAppointment(slotId=S1)
+  Note over A,B: Both requests arrive within milliseconds of each other
+
+  AC->>AS: reserveSlot(studentA, S1)
+  AS->>AR: isSlotOpen(S1)
+  AR-->>AS: true (last known state)
+  AS->>AR: createAppointment(studentA, S1, status=Booked)
+  AR->>DB: INSERT with UNIQUE(slot_id) constraint
+  DB-->>AR: 201 Created — commit succeeds
+  AR-->>AS: appointment record (A)
+  AS->>NS: sendBookingConfirmation(studentA, appointmentId)
+  AS-->>AC: success
+  AC-->>A: 201 Booked (confirmation)
+
+  AC->>AS: reserveSlot(studentB, S1)
+  AS->>AR: isSlotOpen(S1)
+  AR-->>AS: true (stale read — A's commit not yet visible to this check)
+  AS->>AR: createAppointment(studentB, S1, status=Booked)
+  AR->>DB: INSERT with UNIQUE(slot_id) constraint
+  DB-->>AR: constraint violation — slot_id already taken
+  AR-->>AS: SLOT_ALREADY_BOOKED
+  AS-->>AC: error: SLOT_ALREADY_BOOKED
+  AC-->>B: 409 SLOT_ALREADY_BOOKED — "This slot was taken a moment ago, please choose another."
+
+  Note over AR,DB: No partial row is left for Student B — the failed INSERT<br/>is rolled back entirely by the database transaction (AD-02, QS-04)
+  Note over B,AC: Recovery: Student B is returned to the availability list<br/>(UC-07 re-invoked) to select a different slot — no retry of the<br/>same slotId is offered, preventing an infinite retry loop

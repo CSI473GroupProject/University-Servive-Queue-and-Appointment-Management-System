@@ -1,0 +1,12 @@
+package bw.ac.ub.csi473.queue.domain;
+
+/** Result of UC-09 Validate Cancellation Policy: "allowed" or "denied with reason". */
+public record CancellationDecision(boolean allowed, String reason) {
+    public static CancellationDecision allow() {
+        return new CancellationDecision(true, null);
+    }
+
+    public static CancellationDecision deny(String reason) {
+        return new CancellationDecision(false, reason);
+    }
+}

@@ -1,0 +1,21 @@
+package bw.ac.ub.csi473.queue.domain;
+
+import java.time.Instant;
+
+/** Appointment record (domain H: AppointmentSlot 0..1 -- 1 Appointment). */
+public record Appointment(
+        String appointmentId,
+        String slotId,
+        String studentId,
+        String serviceId,
+        AppointmentStatus status,
+        Instant createdAt) {
+
+    /** Returns a copy in the new status, or fails if the state model forbids it (BR-08). */
+    public Appointment transitionTo(AppointmentStatus next) {
+        if (!status.canTransitionTo(next)) {
+            throw new IllegalStateException(status + " -> " + next + " is not a valid transition");
+        }
+        return new Appointment(appointmentId, slotId, studentId, serviceId, next, createdAt);
+    }
+}

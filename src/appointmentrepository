@@ -1,0 +1,32 @@
+package bw.ac.ub.csi473.queue.ports;
+
+import bw.ac.ub.csi473.queue.domain.Appointment;
+import bw.ac.ub.csi473.queue.domain.AppointmentSlot;
+import java.util.Optional;
+
+/**
+ * Persistence boundary for the appointment workflow (design problem DP-1).
+ * Implemented by a JPA adapter; the core never sees SQL, JPA or Spring.
+ */
+public interface AppointmentRepository {
+
+    Optional<AppointmentSlot> findSlot(String slotId);
+
+    Optional<Appointment> findById(String appointmentId);
+
+    /** BR-02: does an active (Booked/Called) appointment already hold this slot? */
+    boolean slotHasActiveAppointment(String slotId);
+
+    /** BR-04: does this student already hold an active appointment for the service? */
+    boolean studentHasActiveAppointment(String studentId, String serviceId);
+
+    /**
+     * Persists the appointment inside the caller's transaction.
+     *
+     * @throws bw.ac.ub.csi473.queue.domain.BookingException.SlotAlreadyBooked
+     *         when the database UNIQUE(slot_id) constraint rejects the insert. The
+     *         adapter must translate the persistence-specific exception, so the
+     *         core never depends on Spring's DataIntegrityViolationException.
+     */
+    Appointment save(Appointment appointment);
+}

@@ -1,0 +1,15 @@
+package bw.ac.ub.csi473.queue.domain;
+
+import java.time.Instant;
+
+/**
+ * Domain event published after a booking is saved. Carries identifiers only,
+ * keeping notification content to the minimum necessary (UC-11 business rule).
+ */
+public record AppointmentBooked(
+        String appointmentId,
+        String studentId,
+        String serviceId,
+        String slotId,
+        Instant occurredAt) {
+}

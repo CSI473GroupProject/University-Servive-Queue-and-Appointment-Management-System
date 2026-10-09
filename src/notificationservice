@@ -1,0 +1,48 @@
+package bw.ac.ub.csi473.queue.application;
+
+import bw.ac.ub.csi473.queue.domain.AppointmentBooked;
+import bw.ac.ub.csi473.queue.domain.NotificationMessage;
+import bw.ac.ub.csi473.queue.ports.NotificationSender;
+import bw.ac.ub.csi473.queue.ports.NotificationSender.DeliveryResult;
+import java.util.List;
+
+/**
+ * UC-11 Receive Notifications. Listens for domain events (the Spring adapter calls
+ * onAppointmentBooked AFTER the booking transaction commits) and tries each
+ * channel in priority order: in-app first, then email (report ADR-04).
+ *
+ * A failing channel never propagates an exception: the booking is already
+ * committed and must stay committed (Lab 08 data-integrity rule, QS-04).
+ */
+public class NotificationService {
+
+    private static final System.Logger LOG = System.getLogger(NotificationService.class.getName());
+
+    private final List<NotificationSender> sendersInPriorityOrder;
+
+    public NotificationService(List<NotificationSender> sendersInPriorityOrder) {
+        this.sendersInPriorityOrder = List.copyOf(sendersInPriorityOrder);
+    }
+
+    /** @return true if at least one channel delivered the confirmation. */
+    public boolean onAppointmentBooked(AppointmentBooked event) {
+        NotificationMessage message = new NotificationMessage(
+                event.studentId(), "booking_confirmed",
+                "Your appointment booking is confirmed.");   // minimum necessary content (UC-11)
+
+        for (NotificationSender sender : sendersInPriorityOrder) {
+            try {
+                if (sender.send(message) == DeliveryResult.DELIVERED) {
+                    LOG.log(System.Logger.Level.INFO, "booking_confirmed delivered via " + sender.channel());
+                    return true;
+                }
+                LOG.log(System.Logger.Level.WARNING, sender.channel() + " reported FAILED; trying next channel");
+            } catch (RuntimeException ex) {
+                LOG.log(System.Logger.Level.WARNING, sender.channel() + " threw " + ex.getClass().getSimpleName() + "; trying next channel");
+            }
+        }
+        LOG.log(System.Logger.Level.ERROR, "all channels failed for appointment " + event.appointmentId()
+                + "; surfaced next time the student opens the app (UC-11 exception 3a)");
+        return false;
+    }
+}

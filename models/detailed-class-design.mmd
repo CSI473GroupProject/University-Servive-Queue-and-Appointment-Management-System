@@ -1,0 +1,114 @@
+%% Student Registration Queue Management System — Team 17
+%% Detailed class/interface model — CSI473 Lab 09
+%% Core workflow: bookAppointment (UC-06) + cancelAppointment (UC-08/UC-09) + notification (UC-11)
+%% Editable source. Readable export: detailed-class-design.svg
+%% Dependency direction: adapters -> application core -> ports <- adapters (all arrows point toward the core's interfaces)
+
+classDiagram
+  direction LR
+
+  %% ---------- Inbound adapter ----------
+  class AppointmentController {
+    <<Spring @RestController>>
+    +bookAppointment(request) ResponseEntity
+    +cancelAppointment(id) ResponseEntity
+  }
+  class ApiExceptionHandler {
+    <<Spring @ControllerAdvice>>
+    +handle(BookingException) ResponseEntity
+  }
+
+  %% ---------- Application core ----------
+  class AppointmentService {
+    +reserveSlot(studentId, slotId) Appointment
+    +cancelAppointment(appointmentId) Appointment
+  }
+  class NotificationService {
+    +onAppointmentBooked(AppointmentBooked) boolean
+  }
+
+  %% ---------- Domain ----------
+  class Appointment {
+    <<record>>
+    +transitionTo(status) Appointment
+  }
+  class AppointmentSlot {
+    <<record>>
+  }
+  class AppointmentStatus {
+    <<enumeration>>
+    BOOKED
+    CALLED
+    SERVED
+    NO_SHOW
+    CANCELLED
+    +isActive() boolean
+    +canTransitionTo(next) boolean
+  }
+  class AppointmentBooked {
+    <<domain event>>
+  }
+  class BookingException {
+    <<abstract>>
+    +errorCode() String
+  }
+
+  %% ---------- Ports (interfaces owned by the core) ----------
+  class AppointmentRepository {
+    <<port: Repository>>
+    +findSlot(slotId) Optional
+    +findById(id) Optional
+    +slotHasActiveAppointment(slotId) boolean
+    +studentHasActiveAppointment(studentId, serviceId) boolean
+    +save(Appointment) Appointment
+  }
+  class DomainEventPublisher {
+    <<port: Observer>>
+    +publish(event)
+  }
+  class NotificationSender {
+    <<port: Adapter, DP-3>>
+    +channel() String
+    +send(NotificationMessage) DeliveryResult
+  }
+  class CancellationPolicy {
+    <<port: configuration boundary, no Strategy>>
+    +evaluate(serviceId, start, now) CancellationDecision
+  }
+
+  %% ---------- Outbound adapters ----------
+  class JpaAppointmentRepository {
+    <<adapter: Spring Data JPA>>
+  }
+  class SpringDomainEventPublisher {
+    <<adapter: ApplicationEventPublisher + AFTER_COMMIT listener>>
+  }
+  class InAppNotificationSender {
+    <<adapter: primary channel>>
+  }
+  class EmailNotificationSender {
+    <<adapter: fallback via Notification Gateway>>
+  }
+  class ConfiguredCancellationPolicy {
+    <<adapter: service cut-off, else University default>>
+  }
+
+  %% ---------- Dependencies ----------
+  AppointmentController --> AppointmentService : calls
+  ApiExceptionHandler ..> BookingException : maps to HTTP + errorCode
+  AppointmentService --> AppointmentRepository : uses
+  AppointmentService --> DomainEventPublisher : publishes
+  AppointmentService --> CancellationPolicy : uses
+  AppointmentService ..> Appointment : creates
+  AppointmentService ..> AppointmentBooked : emits
+  AppointmentService ..> BookingException : throws
+  NotificationService --> NotificationSender : tries in priority order
+  Appointment --> AppointmentStatus
+  Appointment ..> AppointmentSlot : references by slotId
+
+  JpaAppointmentRepository ..|> AppointmentRepository
+  SpringDomainEventPublisher ..|> DomainEventPublisher
+  InAppNotificationSender ..|> NotificationSender
+  EmailNotificationSender ..|> NotificationSender
+  ConfiguredCancellationPolicy ..|> CancellationPolicy
+  SpringDomainEventPublisher ..> NotificationService : AFTER_COMMIT delivery

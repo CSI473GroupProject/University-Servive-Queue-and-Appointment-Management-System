@@ -1,0 +1,14 @@
+package bw.ac.ub.csi473.queue.domain;
+
+import java.time.LocalDate;
+import java.time.LocalTime;
+
+/** A bookable unit of time for one registration service (Phase 1 glossary: Slot). */
+public record AppointmentSlot(
+        String slotId,
+        String serviceId,
+        LocalDate date,
+        LocalTime startTime,
+        LocalTime endTime,
+        boolean open) {
+}

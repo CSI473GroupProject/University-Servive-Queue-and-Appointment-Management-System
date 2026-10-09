@@ -1,0 +1,23 @@
+package bw.ac.ub.csi473.queue.domain;
+
+/**
+ * Shared status values from the Phase 1 state model (Section 7.2).
+ * Transition rules live here so BR-08 (completed appointments cannot be
+ * modified or reopened) is enforced in exactly one place.
+ */
+public enum AppointmentStatus {
+    BOOKED, CALLED, SERVED, NO_SHOW, CANCELLED;
+
+    /** Active = still occupies its slot (BR-02) and counts for BR-04. */
+    public boolean isActive() {
+        return this == BOOKED || this == CALLED;
+    }
+
+    public boolean canTransitionTo(AppointmentStatus next) {
+        return switch (this) {
+            case BOOKED -> next == CALLED || next == CANCELLED;   // UC-14, UC-08
+            case CALLED -> next == SERVED || next == NO_SHOW;     // UC-15
+            case SERVED, NO_SHOW, CANCELLED -> false;             // terminal (BR-08)
+        };
+    }
+}

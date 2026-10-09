@@ -1,0 +1,80 @@
+# ADR-002: Dependency direction, interface boundaries and Spring Boot framework
+
+**Status:** Accepted
+**Date:** 9 October 2026
+**Project:** Student Registration Queue Management System — Team 17
+**Applies to:** the team's own approved project (Phase 1, approved 13/08/2026)
+
+> **Numbering note.** This file is the repository's second ADR (after `ADR-001-architecture.md`
+> from Lab 7). The Phase 1 report numbers its records ADR-01 (architecture style, = repo ADR-001),
+> ADR-02 (queue position polling), ADR-03 (concurrency control for booking) and ADR-04
+> (notification delivery). Labs 7 and 8 cite "ADR-003" and "ADR-004" meaning **report** ADR-03 and
+> ADR-04. This ADR is **not** the report's ADR-02. When the records are merged into the Phase 2
+> report, renumber one set so each number is unique.
+
+## Context
+
+ADR-001 selected a layered monolith. Lab 8 turned it into a data model, the `bookAppointment`
+contract, a deployment and a failure-recovery flow. Phase 2 must now implement the core workflow
+(UC-06 Book Appointment, with UC-08/UC-09 cancellation and UC-11 notification) with a five-person
+team in one semester.
+
+Three design problems, each tied to named requirements, drive this decision:
+
+- **DP-1 persistence coupling** — the booking race (UC-06 exception 4a) surfaces as a database
+  unique-constraint violation that business logic must treat as a normal outcome (BR-02, QS-04, report ADR-03).
+- **DP-2 secondary effect** — the booking confirmation must not roll back, delay or duplicate a
+  booking (UC-11, QS-04, report ADR-04, Lab 8 data-integrity rules).
+- **DP-3 external dependency with fallback** — in-app then email delivery through a gateway outside
+  the trust boundary (UC-11, report ADR-04, Lab 8 deployment).
+
+## Decision
+
+1. Implement the monolith with **Java and Spring Boot** (`docs/framework-decision.md`).
+2. Organise code so **dependencies point inward**: adapters (web, persistence, events, notification) depend on **ports**; the core (`application`, `domain`, `ports`) imports no Spring, JPA, HTTP or SMTP type.
+3. Apply exactly three techniques (`docs/pattern-decisions.md`): **Repository port** with exception translation (PD-1), **domain event delivered after commit** (PD-2), and **adapter ports with ordered fallback** for notification channels (PD-3).
+4. **Reject** an external message broker, Spring Cloud and WebFlux (R-1, framework rejection), and **Strategy hierarchies** for call-next and cancellation (R-2).
+
+The class and interface model is `models/detailed-class-design.mmd` (export `.svg`). The ports and
+core skeletons are in `src/interfaces-or-ports/` and compile with the JDK alone.
+
+## Alternatives considered
+
+| Alternative | Why not chosen |
+|---|---|
+| **Conventional layered Spring code** (controller → `@Service` → `@Repository` JPA entities used everywhere, no ports) | Fastest to write, but business rules would depend on JPA/Spring types: the race outcome would be a `DataIntegrityViolationException` handled in the controller, and rules like BR-08 could only be tested with a Spring context. Rejected for DP-1 and testability. |
+| **Full hexagonal architecture** with an inbound port interface for every use case and separate DTO/model mapping at every boundary | More ceremony than one workflow justifies. We keep ports only where an external or persistence dependency exists and keep the controller calling `AppointmentService` directly. |
+| **Message broker or Spring Cloud for events/notification** | See R-1: extra servers and failure modes against QS-02 and AD-03. |
+| **Strategy classes for cancellation and call-next** | See R-2: the variation is configuration data, not behaviour. |
+
+## Consequences
+
+**Positive**
+- The booking rules (UC-06 check order, BR-01/02/04, BR-08 transitions) are testable as plain Java with in-memory fakes, in milliseconds and without a database or Spring context.
+- The race outcome is a normal domain result: `SlotAlreadyBooked` → `409 SLOT_ALREADY_BOOKED`, exactly as the Lab 8 contract states, while the database constraint remains the real guarantee.
+- A notification channel or gateway failure cannot undo a committed booking (QS-04), and the failing channel is isolated behind one interface.
+- Adding SMS later (report ADR-04) is one new adapter with no change to the core.
+
+**Negative (accepted)**
+- Extra structure: JPA entity classes plus a mapper to the domain records (records cannot be JPA entities), and four small port interfaces to keep in step with their adapters.
+- Indirect control flow for notification (event, then listener) is harder to trace than a direct call.
+- In-memory events can be lost if the application crashes between commit and delivery. Mitigation planned for Phase 2: persist the `NOTIFICATION` row with status `queued` in the booking transaction and retry undelivered rows.
+- `@Transactional` is an annotation-only Spring dependency in the application layer. The skeleton omits it so it compiles with the JDK alone; the Spring build adds that one import to `AppointmentService`.
+- A blocking, single-node server sets a concurrency ceiling that must be measured, not assumed.
+
+## Reconsideration trigger
+
+Revisit this decision if any of the following evidence appears:
+
+1. **Mapping cost outweighs benefit.** If Phase 2 shows the entity-to-domain mapper is the main source of defects or consumes a disproportionate share of effort, with no matching gain in test speed, simplify toward annotated JPA entities in the domain.
+2. **Lost notifications observed.** If testing or use shows `AppointmentBooked` notifications being lost often enough that the `queued`-row retry does not close the gap, reconsider a durable event mechanism (R-1 revisit condition).
+3. **Throughput evidence from ADR-001.** If load tests against QS-01 (2 s) or QS-06 (95% within 3 s at 500 users) show blocking request threads, not the database, are the bottleneck, reconsider the concurrency model.
+4. **A second real algorithm appears.** If a stakeholder requires a distinct call-order or cancellation algorithm (for example priority groups), introduce a Strategy at that point (R-2 revisit condition).
+5. **The port boundary is bypassed.** If code review finds core classes importing Spring or JPA types because the boundary is too awkward to keep, either repair the design or formally relax the rule in this ADR.
+
+## Verification
+- Skeletons in `src/interfaces-or-ports/` were compiled with the JDK alone (no Spring or JPA on the classpath) and exercised in a scratch run: the losing booking in the race raised `SLOT_ALREADY_BOOKED` and published no event; the notification fallback delivered by email after the in-app sender failed.
+- Still to be done in Phase 2: the repository integration test and Lab 8 concurrency test against a real database; the listener-failure test with a real transaction; the all-channels-fail unit test.
+
+## Traceability
+Functional requirements: FR-06, FR-07, FR-08. Use cases: UC-06, UC-07, UC-08, UC-09, UC-11. Business rules: BR-01, BR-02, BR-04, BR-05, BR-08. Quality scenarios: QS-02, QS-03, QS-04, QS-06. Drivers: AD-02, AD-03. Related decisions: ADR-001 (Lab 7), report ADR-03 and ADR-04. Related artefacts: `docs/pattern-decisions.md`, `docs/framework-decision.md`, `models/detailed-class-design.mmd` / `.svg`, `docs/api-contracts/core-operation.yaml`, `models/failure-recovery.mmd`, `docs/data-integrity.md`.

@@ -1,0 +1,10 @@
+package bw.ac.ub.csi473.queue.ports;
+
+/**
+ * Secondary-effect boundary (design problem DP-2). Publishing must not make the
+ * originating transaction depend on any listener succeeding. The Spring adapter
+ * delivers events to listeners only AFTER the transaction commits.
+ */
+public interface DomainEventPublisher {
+    void publish(Object event);
+}

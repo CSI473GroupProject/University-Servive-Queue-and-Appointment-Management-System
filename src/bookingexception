@@ -1,0 +1,40 @@
+package bw.ac.ub.csi473.queue.domain;
+
+/**
+ * Business-rule failures with stable error codes. The codes are exactly those in
+ * docs/api-contracts/core-operation.yaml (Lab 08); the web adapter maps each to
+ * its HTTP status, so the core never references HTTP or Spring.
+ */
+public abstract class BookingException extends RuntimeException {
+    private final String errorCode;
+
+    protected BookingException(String errorCode, String message) {
+        super(message);
+        this.errorCode = errorCode;
+    }
+
+    public String errorCode() {
+        return errorCode;
+    }
+
+    public static final class ValidationFailed extends BookingException {            // 400
+        public ValidationFailed(String message) { super("VALIDATION_ERROR", message); }
+    }
+    public static final class SlotNotFound extends BookingException {                // 404
+        public SlotNotFound() { super("SLOT_NOT_FOUND", "No appointment slot exists with the given slotId."); }
+    }
+    public static final class SlotUnavailable extends BookingException {             // 409 (BR-01)
+        public SlotUnavailable() { super("SLOT_UNAVAILABLE", "The requested slot is not currently open for booking."); }
+    }
+    public static final class DuplicateActiveAppointment extends BookingException {  // 409 (BR-04)
+        public DuplicateActiveAppointment() { super("DUPLICATE_ACTIVE_APPOINTMENT", "You already have an active appointment for this service."); }
+    }
+    /** Thrown by the persistence adapter when the UNIQUE(slot_id) constraint fires (BR-02, report ADR-03). */
+    public static final class SlotAlreadyBooked extends BookingException {           // 409
+        public SlotAlreadyBooked() { super("SLOT_ALREADY_BOOKED", "This slot was booked by another student a moment ago. Please choose another slot."); }
+    }
+    /** UC-08 / UC-09; not part of the Lab 08 bookAppointment contract. */
+    public static final class CancellationDenied extends BookingException {
+        public CancellationDenied(String reason) { super("CANCELLATION_DENIED", reason); }
+    }
+}

@@ -1,0 +1,5 @@
+package bw.ac.ub.csi473.queue.domain;
+
+/** Channel-neutral message handed to a NotificationSender (UC-11). */
+public record NotificationMessage(String studentId, String eventType, String body) {
+}

@@ -1,0 +1,94 @@
+package bw.ac.ub.csi473.queue.application;
+
+import bw.ac.ub.csi473.queue.domain.Appointment;
+import bw.ac.ub.csi473.queue.domain.AppointmentBooked;
+import bw.ac.ub.csi473.queue.domain.AppointmentSlot;
+import bw.ac.ub.csi473.queue.domain.AppointmentStatus;
+import bw.ac.ub.csi473.queue.domain.BookingException;
+import bw.ac.ub.csi473.queue.domain.CancellationDecision;
+import bw.ac.ub.csi473.queue.ports.AppointmentRepository;
+import bw.ac.ub.csi473.queue.ports.CancellationPolicy;
+import bw.ac.ub.csi473.queue.ports.DomainEventPublisher;
+import java.time.Clock;
+import java.time.Instant;
+import java.util.UUID;
+
+/**
+ * Core application service for UC-06 Book Appointment and UC-08 Cancel Appointment.
+ *
+ * Depends only on ports (interfaces) and the domain. No Spring, JPA or HTTP types
+ * appear here. In the Spring Boot build this class is registered as a bean and
+ * reserveSlot/cancelAppointment carry @Transactional (a metadata-only annotation
+ * dependency, omitted from this skeleton so it compiles with the JDK alone;
+ * see docs/framework-decision.md).
+ */
+public class AppointmentService {
+
+    private final AppointmentRepository appointments;
+    private final DomainEventPublisher events;
+    private final CancellationPolicy cancellationPolicy;
+    private final Clock clock;
+
+    public AppointmentService(AppointmentRepository appointments,
+                              DomainEventPublisher events,
+                              CancellationPolicy cancellationPolicy,
+                              Clock clock) {
+        this.appointments = appointments;
+        this.events = events;
+        this.cancellationPolicy = cancellationPolicy;
+        this.clock = clock;
+    }
+
+    /**
+     * bookAppointment from docs/api-contracts/core-operation.yaml. The check order
+     * matches the contract: validation, existence, availability, uniqueness, then
+     * the save whose UNIQUE(slot_id) constraint is the final race arbiter.
+     */
+    public Appointment reserveSlot(String studentId, String slotId) {
+        if (isBlank(studentId) || isBlank(slotId)) {
+            throw new BookingException.ValidationFailed("studentId and slotId are required.");
+        }
+
+        AppointmentSlot slot = appointments.findSlot(slotId)
+                .orElseThrow(BookingException.SlotNotFound::new);
+
+        if (!slot.open() || appointments.slotHasActiveAppointment(slotId)) {   // BR-01, BR-02
+            throw new BookingException.SlotUnavailable();
+        }
+        if (appointments.studentHasActiveAppointment(studentId, slot.serviceId())) {   // BR-04
+            throw new BookingException.DuplicateActiveAppointment();
+        }
+
+        Appointment toSave = new Appointment(
+                UUID.randomUUID().toString(), slotId, studentId, slot.serviceId(),
+                AppointmentStatus.BOOKED, clock.instant());
+
+        // May throw SlotAlreadyBooked if a concurrent request won the race (UC-06 exception 4a).
+        Appointment saved = appointments.save(toSave);
+
+        // Secondary effect: delivered only after commit, never inside this transaction's success path.
+        events.publish(new AppointmentBooked(
+                saved.appointmentId(), saved.studentId(), saved.serviceId(), saved.slotId(), clock.instant()));
+        return saved;
+    }
+
+    /** UC-08 using the UC-09 cancellation policy; outside the Lab 08 bookAppointment contract. */
+    public Appointment cancelAppointment(String appointmentId) {
+        Appointment appointment = appointments.findById(appointmentId)
+                .orElseThrow(() -> new BookingException.ValidationFailed("Unknown appointment."));
+        AppointmentSlot slot = appointments.findSlot(appointment.slotId())
+                .orElseThrow(BookingException.SlotNotFound::new);
+
+        Instant start = slot.date().atTime(slot.startTime()).atZone(clock.getZone()).toInstant();
+        CancellationDecision decision =
+                cancellationPolicy.evaluate(appointment.serviceId(), start, clock.instant());
+        if (!decision.allowed()) {
+            throw new BookingException.CancellationDenied(decision.reason());
+        }
+        return appointments.save(appointment.transitionTo(AppointmentStatus.CANCELLED));   // BR-05, BR-08
+    }
+
+    private static boolean isBlank(String s) {
+        return s == null || s.isBlank();
+    }
+}

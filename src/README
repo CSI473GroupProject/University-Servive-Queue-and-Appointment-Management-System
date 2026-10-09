@@ -1,0 +1,19 @@
+# interfaces-or-ports — Lab 09 code skeleton
+
+Core of the `bookAppointment` workflow (UC-06, with UC-08/UC-09 and UC-11), written as pure Java
+(Java 17+; uses records, `switch` expressions). No Spring, JPA, HTTP or SMTP imports. Names match
+`models/detailed-class-design.mmd`.
+
+| Package | Contents | Source |
+|---|---|---|
+| `ports/` | `AppointmentRepository`, `DomainEventPublisher`, `NotificationSender`, `CancellationPolicy` | PD-1, PD-2, PD-3; see `docs/pattern-decisions.md` |
+| `domain/` | `Appointment`, `AppointmentSlot`, `AppointmentStatus`, `AppointmentBooked`, `NotificationMessage`, `CancellationDecision`, `BookingException` | Phase 1 §6–7, Lab 8 API error codes |
+| `application/` | `AppointmentService` (`reserveSlot`, `cancelAppointment`), `NotificationService` | UC-06, UC-08, UC-11 |
+
+Adapters (Spring MVC controller, Spring Data JPA repository, Spring event publisher, in-app and
+email senders) are Phase 2 work and implement these interfaces.
+
+## Compile check
+```bash
+mkdir -p out && javac -d out $(find . -name '*.java')
+```

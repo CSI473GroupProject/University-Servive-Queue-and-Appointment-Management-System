@@ -1,0 +1,17 @@
+package bw.ac.ub.csi473.queue.ports;
+
+import bw.ac.ub.csi473.queue.domain.NotificationMessage;
+
+/**
+ * One delivery channel (UC-11). In-app is primary and email is the fallback
+ * (report ADR-04); SMS would be a further adapter without touching the core.
+ */
+public interface NotificationSender {
+
+    enum DeliveryResult { DELIVERED, FAILED }
+
+    /** Channel name used in delivery logs, e.g. "in_app" or "email". */
+    String channel();
+
+    DeliveryResult send(NotificationMessage message);
+}

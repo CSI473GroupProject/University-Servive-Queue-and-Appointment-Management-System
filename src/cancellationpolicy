@@ -1,0 +1,16 @@
+package bw.ac.ub.csi473.queue.ports;
+
+import bw.ac.ub.csi473.queue.domain.CancellationDecision;
+import java.time.Instant;
+
+/**
+ * Boundary onto configuration data for UC-09. The cut-off is configured per service
+ * with a University-wide default (Phase 1 glossary), so it is a value to look up,
+ * not behaviour that varies: there is ONE production implementation and this is
+ * deliberately NOT a Strategy hierarchy (see docs/pattern-decisions.md, rejection R-2).
+ * The interface exists so AppointmentService does not depend on service-configuration
+ * persistence and can be tested with a fixed rule.
+ */
+public interface CancellationPolicy {
+    CancellationDecision evaluate(String serviceId, Instant appointmentStart, Instant now);
+}

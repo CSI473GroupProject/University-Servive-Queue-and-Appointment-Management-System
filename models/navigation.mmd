@@ -1,0 +1,59 @@
+%% Student Registration Queue Management System — Team 17
+%% Navigation model — CSI473 Lab 10
+%% Editable source. Readable export: navigation.svg
+%% Screen ids match prototype/wireframes-*.svg. Edge labels give the use case and the user action.
+
+flowchart LR
+
+  subgraph STUDENT["Student (primary user) — mobile-first"]
+    direction LR
+    SIGN["Sign in<br/>UC-01"]
+    LOCK["Account locked message<br/>QS-03"]
+    S1["S1 Services list<br/>UC-01 / FR-01"]
+    S2["S2 Queue status<br/>UC-02, UC-04 / FR-02-04"]
+    LEAVE["Leave queue? dialog<br/>(no use case yet - gap)"]
+    S3["S3 Choose appointment time<br/>UC-06, UC-07 / FR-05, FR-06"]
+    S4["S4 Booking conflict<br/>S3 with error alert<br/>UC-06 exc. 4a"]
+    CONF["Booking confirmed<br/>UC-06 step 5"]
+    MYAPP["My appointments<br/>UC-10"]
+    CANCEL["Cancel appointment dialog<br/>UC-08, UC-09 / FR-08"]
+    NOTIF["Notifications panel<br/>UC-11 (reachable from any screen)"]
+  end
+
+  subgraph STAFF["Registration Staff (secondary user) — desktop"]
+    direction LR
+    SSIGN["Sign in"]
+    T1["T1 Queue dashboard (home)<br/>UC-12 / FR-09"]
+    CALLED["T1 Called-student panel<br/>Complete / No-show<br/>UC-14, UC-15 / FR-10"]
+    T2["T2 Empty / stale states<br/>UC-14 exc. 1a"]
+    APPTS["Appointments view<br/>UC-13"]
+  end
+
+  SIGN -- "5 failed attempts" --> LOCK
+  SIGN -- "success" --> S1
+  S1 -- "Join queue (1 action)" --> S2
+  S1 -- "Book appointment" --> S3
+  S2 -- "Leave queue" --> LEAVE
+  LEAVE -- "Confirm / Keep my place" --> S1
+  S3 -- "Confirm booking" --> CONF
+  S3 -- "slot taken (409)" --> S4
+  S4 -- "choose another time" --> S3
+  CONF --> MYAPP
+  S1 -- "My appointments" --> MYAPP
+  MYAPP -- "Cancel" --> CANCEL
+  CANCEL -- "Confirm / Keep appointment" --> MYAPP
+  S1 -.-> NOTIF
+  S2 -.-> NOTIF
+
+  SSIGN -- "success" --> T1
+  T1 -- "Call next (1 action)" --> CALLED
+  CALLED -- "Complete / No-show (1 action)" --> T1
+  T1 -- "no one waiting or due" --> T2
+  T2 -- "refresh / data restored" --> T1
+  T1 -- "Appointments" --> APPTS
+  APPTS -- "Queues" --> T1
+
+  style STUDENT fill:#eaf2ff,stroke:#2c4a7a
+  style STAFF fill:#eafbea,stroke:#2c6a2c
+  style LEAVE stroke:#7a1f2b,stroke-dasharray: 4 3
+  style LOCK fill:#fdecea,stroke:#7a1f2b

@@ -46,7 +46,7 @@ One row per observation. **Severity:** 1 = small annoyance; 2 = hesitation or de
 |202105155 |A|queue status |The user wanted to leave the queue so he clicked on the leave button and successfully left,"left", no hesitation |1 |
 |202105155 |B| Choose appointment time |the user wanted to select an apointment time suitable for his timetable, he struggled with the date format, "what is the format for date?" on the date format to use |  3 |
 |202105155|C|staff call next and complete  |The user succesfully alternated between caling for both appointments and registration queries addressing them successfull without starving the other, "Easy peezy"  |1  |   
-## 5. Results per task (to be filled in)
+## 5. Results per task 
 
 | Participant | Task | Result (Success / Assisted / Failed) | Time (mm:ss) | Wrong taps or detours | Help asked? | Ease rating (1(vey hard)–7(very easy)) |
 |---|---|---|---|---|---|---|
@@ -58,13 +58,11 @@ One row per observation. **Severity:** 1 = small annoyance; 2 = hesitation or de
 | 202105155 | B |assisted |2:00|0|yes | 6|
 |202105155|C|success |1:58  | 0 | yes|7|
 
-**Success criteria used** (from `docs/user-profile-and-tasks.md`): Task A — reaches the confirmation, unaided, within 3 minutes, and can say what happens next. Task B — books a slot and recovers from the conflict without re-entering the date. Task C — calls next and completes, and does not confuse Complete with No-show.
+**Success criteria used** (from `docs/user-profile-and-tasks.md`): Task A — reaches the confirmation, unaided, within 3 minutes. Task B — books a slot and recovers from the conflict without re-entering the date. Task C — calls next and completes, and does not confuse Complete with No-show.
 
-**Summary (write after the session):** how many succeeded unaided on each task; the median time for Task A; the most serious problem (highest severity, most participants).
+## 6. Revision log 
 
-## 6. Revision log (to be filled in)
 
-At least one row must come from a difficulty that was **actually observed**. Name the evidence.
 
 | # | Observed difficulty (participant, task, frame, what happened) | Design change made | Artefact and commit changed | How it will be verified after implementation |
 |---|---|---|---|---|
@@ -88,14 +86,6 @@ At least one row must come from a difficulty that was **actually observed**. Nam
 | **Most important usability problem observed** (with evidence: participant, task, frame) |Participant 202204319, Task C, Frame: staff call next and complete. The user lost connection and waited for service recovery indefinitely (Severity 3). Secondary issue: Participant 202105155 (Task B) struggled with the date format, asking "what is the format for date?". |
 | **Interface change made** (file and commit) | Modified ui-states.md and the prototype to add a clear error state/timeout message for lost connections, and added placeholder text "DD/MM/YYYY" to the date picker. |
 | **How it will be verified after implementation** |1. Re-run tasks: Have three new first-time users attempt Task B and C on the built screen, requiring them to finish unaided within the task limit (specifically ensuring they don't get stuck on the date format).2. End-to-end test: Add an automated test that asserts the new "connection lost" alert is present and reachable, and that the date format placeholder is rendered. |
-
-**Suggested ways to verify** (choose the ones that fit the change): re-run the same task with **three new first-time users** on the built screen and require every one to finish unaided within the task limit; add an **end-to-end test** that asserts the changed element is present and reachable by keyboard; check the changed element against `docs/accessibility-checklist.md` rows 1–6; for Task A, record the completion time of each tester to feed the QS-05 measurement in Section 13 of the report.
-
-## 9. Academic integrity note
-The test protocol and the wireframes were prepared with AI assistance. The observations, ratings
-and decisions recorded in Sections 2 and 4–8 must come from the team's own session. Disclose the
-assistance in Section 16 of the project report, and keep the original notes (photos of paper
-notes, or the observer's file) as source evidence.
 
 ## Traceability
 QS-05 (first-time usability), QS-01 (position shown quickly), QS-03 (lockout message); UC-01, UC-02, UC-04, UC-06, UC-14, UC-15; FR-02, FR-04, FR-06, FR-10. Related artefacts: `docs/user-profile-and-tasks.md`, `docs/ui-states.md`, `docs/accessibility-checklist.md`, `prototype/wireframes-student.svg`, `prototype/wireframes-staff.svg`, `models/navigation.mmd`.

@@ -45,23 +45,23 @@ One row per observation. **Severity:** 1 = small annoyance; 2 = hesitation or de
 
 | Participant | Task | Frame | What happened (exact action, words said, where they hesitated) | Severity |
 |---|---|---|---|---|
-| | | | | |
-| | | | | |
-| | | | | |
-| | | | | |
-| | | | | |
-| | | | | |
+|202204313 |A | | | |
+|202204313 |A| | | |
+|202204319 |B| | | |
+|202204319 |B| | | |
+|202105155 |C| | | |
+|202105155 |C| | | |
 
 ## 5. Results per task (to be filled in)
 
 | Participant | Task | Result (Success / Assisted / Failed) | Time (mm:ss) | Wrong taps or detours | Help asked? | Ease rating (1–7) |
 |---|---|---|---|---|---|---|
-| P1 | A | | | | | |
-| P1 | B | | | | | |
-| P2 | A | | | | | |
-| P2 | C | | | | | |
-| P3 | A | | | | | |
-| P3 | B | | | | | |
+| 202204313  | A | | | | | |
+| 202204313 | B | | | | | |
+| 202204319 | A | | | | | |
+| 202204319 | C | | | | | |
+| 202105155 | A | | | | | |
+| 202105155 | B | | | | | |
 
 **Success criteria used** (from `docs/user-profile-and-tasks.md`): Task A — reaches the confirmation, unaided, within 3 minutes, and can say what happens next. Task B — books a slot and recovers from the conflict without re-entering the date. Task C — calls next and completes, and does not confuse Complete with No-show.
 

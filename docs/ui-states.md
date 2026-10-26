@@ -106,7 +106,7 @@
 
 ## Decisions and consequences
 - **No offline caching and no queued actions.** The offline behaviour is to show the last data, label it stale and **pause actions**. Queued offline calls could call the same student twice or reorder the queue (BR-06, report ADR-03). Consequence: a staff member or student who loses connection simply cannot act until it returns. This follows the lab's warning not to add offline features the project does not need.
-- **Messages after timeouts point to My appointments** because a booking may have been saved even though the reply was lost (Lab 8 data-integrity design).
+- **Messages after timeouts point to My appointments** because a booking may have been saved even though the reply was lost.
 - **Items marked Proposed** (queue-join failure, "called elsewhere", "wrong role", request timeout) need a decision by the team: add to the use cases or API contract, or remove from the interface.
 
 ## Traceability

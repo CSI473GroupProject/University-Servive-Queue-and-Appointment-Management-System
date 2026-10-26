@@ -1,6 +1,6 @@
 # Usability Test Record
 
-**Project:** Student Registration Queue Management System — Team 17
+**Project:** Student Registration Queue Management System — Group 17
 **Lab:** CSI473 Laboratory 10
 **Branch:** lab-10
 **Prototype tested:** `prototype/wireframes-student.svg` and `prototype/wireframes-staff.svg`

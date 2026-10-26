@@ -25,13 +25,9 @@ proof that QS-05 is met.
 
 | ID | Who (role they play) | Is a team member? | Familiar with the system? | Device or input used | Tasks |
 |---|---|---|---|---|---|
-| P1 | Student | should be **No** | should be **No** | | A, B |
-| P2 | Student | should be **No** | should be **No** | | A, C (as staff) |
-| P3 | Student | should be **No** | should be **No** | | A, B (and C if time) |
-
-Choose people outside the team who have not seen the wireframes; team members already know where
-everything is. Record anything relevant that you actually observe (uses glasses, small phone, prefers
-keyboard). **Do not guess.**
+| 202204313 | Student | **No** | **No** |phone | A, B |
+| 202204319 | Student | **No** | **No** |personal computer | A, C (as staff) |
+| 202105155 | Student | **No** | **No** |desktop| A, B,C |
 
 ## 3. Method (14-minute slot: about 4–5 minutes per person)
 1. **Set-up.** Show the wireframes one frame at a time (printed, or on a screen). One team member is the **facilitator** and also plays the system (shows the next frame when the participant "presses" something). One team member is the **observer** and writes everything down. Do not ask the participant to look at the notes column.

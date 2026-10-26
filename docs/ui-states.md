@@ -6,7 +6,7 @@
 **Applies to:** Task A (join queue), Task B (book appointment), Task C (staff call next and complete), plus sign-in.
 
 **How to read the "Source" column**
-- **UC** = a use case flow or exception from Phase 1 §4 (for example UC-06 exc. 4a).
+- **UC** = a use case flow or exception from Phase 1 and 4.
 - **API** = an error code in the Lab 8 contract (`docs/api-contracts/core-operation.yaml`).
 - **Proposed** = needed by the interface but **not** yet defined in Phase 1 or the Lab 8 contract. Each one must be added to the use cases or the API before implementation, or dropped.
 

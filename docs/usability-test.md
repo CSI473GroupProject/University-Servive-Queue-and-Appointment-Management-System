@@ -39,23 +39,24 @@ One row per observation. **Severity:** 1 = small annoyance; 2 = hesitation or de
 
 | Participant | Task | Frame | What happened (exact action, words said, where they hesitated) | Severity |
 |---|---|---|---|---|
-|202204313 |A |queue status | | |
-|202204313 |B| Choose appointment time| | |
-|202204319 |A| | | |
-|202204319 |C| | | |
-|202105155 |C| | | |
-|202105155 |C| | | |
-
+|202204313 |A |queue status |The user correctly pressed on the join queue button and was succesfully allocated position 1 in the que, "wait this aint right" hesitated between book apointment and join queue |2 |
+|202204313 |B| Choose appointment time|the user choose an already active time slot from our pseudo entries,"ooops" no hesitations |1 |
+|202204319 |A|queue status|the user clicked on the refresh button and the screen refreshed to give him his new status queued, "done" no hesitation |1 |
+|202204319 |C|staff call next and complete |the user lost connection and waited for service recovery indefinitely, "No connection", no hesitation  |3 |
+|202105155 |A|queue status |The user wanted to leave the queue so he clicked on the leave button and successfully left,"left", no hesitation |1 |
+|202105155 |B| Choose appointment time |the user wanted to select an apointment time suitable for his timetable, he struggled with the date format, "what is the format for date?" on the date format to use |  3 |
+|202105155|C|staff call next and complete  |The user succesfully alternated between caling for both appointments and registration queries addressing them successfull without starving the other, "Easy peezy"  |1  |   
 ## 5. Results per task (to be filled in)
 
-| Participant | Task | Result (Success / Assisted / Failed) | Time (mm:ss) | Wrong taps or detours | Help asked? | Ease rating (1–7) |
+| Participant | Task | Result (Success / Assisted / Failed) | Time (mm:ss) | Wrong taps or detours | Help asked? | Ease rating (1(vey hard)–7(very easy)) |
 |---|---|---|---|---|---|---|
-| 202204313  | A | | | | | |
-| 202204313 | B | | | | | |
-| 202204319 | A | | | | | |
-| 202204319 | C | | | | | |
-| 202105155 | A | | | | | |
-| 202105155 | B | | | | | |
+| 202204313  | A |success |1:08 |1 |No |6 |
+| 202204313 | B | assisted|1:30 |0 |yes |5 |
+| 202204319 | A | success|0:58 |0 |no |7 |
+| 202204319 | C |failed |4:03 |3 | yes|3 |
+| 202105155 | A |success |1:20|0|no |6 |
+| 202105155 | B |assisted |2:00|0|yes | 6|
+|202105155|C|success |1:58  | 0 | yes|7|
 
 **Success criteria used** (from `docs/user-profile-and-tasks.md`): Task A — reaches the confirmation, unaided, within 3 minutes, and can say what happens next. Task B — books a slot and recovers from the conflict without re-entering the date. Task C — calls next and completes, and does not confuse Complete with No-show.
 
@@ -67,14 +68,9 @@ At least one row must come from a difficulty that was **actually observed**. Nam
 
 | # | Observed difficulty (participant, task, frame, what happened) | Design change made | Artefact and commit changed | How it will be verified after implementation |
 |---|---|---|---|---|
-| 1 | | | | |
-| 2 | | | | |
+| 1 |Participant 202204313, Task A, Queue Status: The participant hesitated between Join Queue and Book Appointment, saying, “wait this ain't right.” Severity: 2. |Improve the distinction between joining the queue and booking an appointment by adding a short explanatory label under each button, such as “Join the queue now” and “Book a time slot.” |Queue interface wireframe in the prototype and docs/ui-states.md. |Retest Task A with new participants and check whether they choose the correct action without assistance within 3 minutes. |
+| 2 |Participant 2022105155, Task B, Choose Appointment Time: The participant struggled with the date format and asked, “what is the format for date?” Severity: 3. |Provide a date picker and display the expected date format as a hint, for example, DD/MM/YYYY |Appointment booking wireframe in the prototype and docs/ui-states.md. |Retest Task B and check whether participants can select a valid appointment date and time without help.|
 
-**To make the revision visible for marking:** commit the **tested** wireframes first, then change the wireframes (and `docs/ui-states.md` or the navigation model if affected) in a **separate commit** whose message names the problem, for example "Lab 10: revise S2 after P2 did not see Leave queue". The two commits together show the revision.
-
-## 7. Where to look — risks in the current design (hypotheses, not results)
-
-These are the places where the design is most likely to cause trouble, drawn from the wireframes. They tell the observer what to watch for. **They are not findings.** If one is observed, the right-hand column suggests a change. If it is not observed, do not claim it.
 
 | # | Risk to watch for | Frame | If observed, consider |
 |---|---|---|---|
@@ -89,9 +85,10 @@ These are the places where the design is most likely to cause trouble, drawn fro
 
 | Item | Entry |
 |---|---|
-| **Most important usability problem observed** (with evidence: participant, task, frame) | |
-| **Interface change made** (file and commit) | |
-| **How it will be verified after implementation** | |
+| **Most important usability problem observed** (with evidence: participant, task, frame) |Participant 202204319, Task C, Frame: staff call next and complete. The user lost connection and waited for service recovery indefinitely (Severity 3). Secondary issue: Participant 202105155 (Task B) struggled with the date format, asking "what is the format for date?". |
+| **Interface change made** (file and commit) | Modified ui-states.md and the prototype to add a clear error state/timeout message for lost connections, and added placeholder text "DD/MM/YYYY" to the date picker. |
+| **How it will be verified after implementation** |1. Re-run tasks: Have three new first-time users attempt Task B and C on the built screen, requiring them to finish unaided within the task limit (specifically ensuring they don't get stuck on the date format).
+2. End-to-end test: Add an automated test that asserts the new "connection lost" alert is present and reachable, and that the date format placeholder is rendered. |
 
 **Suggested ways to verify** (choose the ones that fit the change): re-run the same task with **three new first-time users** on the built screen and require every one to finish unaided within the task limit; add an **end-to-end test** that asserts the changed element is present and reachable by keyboard; check the changed element against `docs/accessibility-checklist.md` rows 1–6; for Task A, record the completion time of each tester to feed the QS-05 measurement in Section 13 of the report.
 

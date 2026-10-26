@@ -30,14 +30,14 @@ the built interface (Phase 2, Section 13).
 
 ## 3. Method (14-minute slot: about 4–5 minutes per person)
 1. **Set-up.** Show the wireframes one frame at a time (printed, or on a screen). One team member is the **facilitator** and also plays the system (shows the next frame when the participant "presses" something). One team member is the **observer** and writes everything down. Do not ask the participant to look at the notes column.
-2. **Introduce (read aloud).** "We are testing the design, not you. Nothing you do is wrong. Please say out loud what you are thinking. I can't help you during the task, and you can stop at any time."
-3. **Give the scenario only** (no hints about which button to press):
+
+2. **Give the scenario only** (no hints about which button to press):
    - **Task A:** "It is the first week of registration. You have a question about your course registration and there is a long line. You want to get in line without standing there. Show me what you would do." *Done when:* they say they have a place in the queue and what happens next.
    - **Task B:** "You prefer a fixed time. Book a time for course registration tomorrow morning." *Done when:* they say the booking is confirmed. (**Facilitator: when the participant confirms 10:30, show frame S4** to test the conflict, then see whether they recover.)
    - **Task C (staff role):** "You are at Counter 3 and have just finished with a student. Call the next student for Course registration, then record that you have finished with them." *Done when:* they say the student is recorded as served.
-4. **Stop rules.** Task A: stop at 3 minutes (the QS-05 limit). Tasks B and C: stop at 5 minutes. Offer help only after the participant has clearly given up, and record that it was **assisted**.
-5. **After each task** ask: "How easy or difficult was that, from 1 (very difficult) to 7 (very easy)?" and "What did you expect to happen after that last step?"
-6. **Keyboard or zoom check (if time):** ask one participant to repeat Task A using only the keyboard on a laptop, or with the browser zoomed to 200%. Record whether this was done; if not, it stays untested.
+3. **Stop rules.** Task A: stop at 3 minutes (the QS-05 limit). Tasks B and C: stop at 5 minutes. Offer help only after the participant has clearly given up, and record that it was **assisted**.
+4. **After each task** ask: "How easy or difficult was that, from 1 (very difficult) to 7 (very easy)?" and "What did you expect to happen after that last step?"
+5. **Keyboard or zoom check (if time):** ask one participant to repeat Task A using only the keyboard on a laptop, or with the browser zoomed to 200%. Record whether this was done; if not, it stays untested.
 
 ## 4. Observations (to be filled in during the session)
 

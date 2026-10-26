@@ -39,7 +39,7 @@ the built interface (Phase 2, Section 13).
 4. **After each task** ask: "How easy or difficult was that, from 1 (very difficult) to 7 (very easy)?" and "What did you expect to happen after that last step?"
 5. **Keyboard or zoom check (if time):** ask one participant to repeat Task A using only the keyboard on a laptop, or with the browser zoomed to 200%. Record whether this was done; if not, it stays untested.
 
-## 4. Observations (to be filled in during the session)
+## 4. Observations 
 
 One row per observation. **Severity:** 1 = small annoyance; 2 = hesitation or detour but completed; 3 = could not continue without help.
 

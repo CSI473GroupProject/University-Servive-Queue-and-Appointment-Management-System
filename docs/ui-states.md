@@ -7,17 +7,7 @@
 
 **How to read the "Source" column**
 - **UC** = a use case flow or exception from Phase 1 and 4.
-- **API** = an error code in the Lab 8 contract (`docs/api-contracts/core-operation.yaml`).
-- **Proposed** = needed by the interface but **not** yet defined in Phase 1 or the Lab 8 contract. Each one must be added to the use cases or the API before implementation, or dropped.
-
-## Message rules (apply to every row)
-1. Say **what happened** and **what the person can do next**, in plain words. No error codes, stack traces or blame.
-2. Show errors **next to the thing they concern** and, for forms or conflicts, also in a summary at the top.
-3. Never use colour alone: every state has a **symbol and words** (`!` for problems, a tick for success, an `x` for unavailable).
-4. **Announce** changes: urgent problems use `role="alert"` and move focus to the message; passive updates use `role="status"` (polite).
-5. Keep the person's work: do not clear fields or selections unless the state itself requires it (S4 clears the taken slot, and says so).
-6. Do not promise what the system cannot guarantee. After a timeout during booking, tell the student to check **My appointments** before trying again, so they do not book twice.
-
+- **API** = an error code in the Lab 8 contract (`docs/api-contracts/core-operation.yaml`). 
 ## Sign-in (all roles) — UC-01, QS-03
 
 | State | Source | What the user sees | Recovery | Accessibility behaviour |
@@ -105,9 +95,8 @@
 | Stale / offline | Report ADR-02, QS-02 | Banner "Connection lost. Showing data from 10:41:50. Actions are paused until the connection returns." with **Retry now**; data labelled "STALE" | Retry; resumes automatically | `role="alert"` once; Call next, Complete and No-show inactive |
 
 ## Decisions and consequences
-- **No offline caching and no queued actions.** The offline behaviour is to show the last data, label it stale and **pause actions**. Queued offline calls could call the same student twice or reorder the queue (BR-06, report ADR-03). Consequence: a staff member or student who loses connection simply cannot act until it returns. This follows the lab's warning not to add offline features the project does not need.
+- **No offline caching and no queued actions.** The offline behaviour is to show the last data, labelled stale and **pause actions**. Queued offline calls could call the same student twice or reorder the queue (BR-06, report ADR-03). Consequence: a staff member or student who loses connection simply cannot act until it returns. 
 - **Messages after timeouts point to My appointments** because a booking may have been saved even though the reply was lost.
-- **Items marked Proposed** (queue-join failure, "called elsewhere", "wrong role", request timeout) need a decision by the team: add to the use cases or API contract, or remove from the interface.
 
 ## Traceability
 Use cases: UC-01, UC-02, UC-04–UC-15. API: Lab 8 `bookAppointment` codes. Quality scenarios: QS-01, QS-02, QS-03, QS-05, QS-07. Business rules: BR-01, BR-02, BR-04, BR-05, BR-06, BR-07, BR-08. Related: `prototype/wireframes-student.svg`, `prototype/wireframes-staff.svg`, `docs/accessibility-checklist.md`.

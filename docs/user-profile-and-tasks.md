@@ -5,20 +5,18 @@
 **Branch:** lab-10
 **Applies to:** the team's own approved project (Phase 1, approved 13/08/2026)
 
-**Evidence note.** The profiles below are built from the Phase 1 stakeholder table (§2), scope
+**Evidence note.** The profiles below are built from the Phase 1 stakeholder table (S2), scope
 assumptions and use cases. Phase 1 lists student interviews/questionnaires (04 Aug 2026) and
-observation of the registration process (28 Jul 2026) as evidence. Where a statement below is an
-assumption rather than something taken from the Phase 1 text, it is marked **(assumption)**; check
-those against the team's interview notes and correct them.
+observation of the registration process (28 Jul 2026) as evidence.
 
 ## Primary user profile — Student seeking registration help
 
 | Aspect | Description | Source |
 |---|---|---|
-| Who | A University of Botswana student who needs registration assistance (for example course registration or a registration enquiry), especially in busy registration periods. | Phase 1 §2 stakeholders |
-| Needs | A convenient way to get registration help without spending long periods in a physical line; to know when they will be served. | Phase 1 §2 (need, concern) |
-| Main frustration | Long waiting and uncertainty about when they will be served; waiting interferes with classes and study. | Phase 1 §2 problem statement |
-| Device | A phone, computer or other internet-enabled device. Mostly a phone **(assumption)**, so the design is mobile-first and must also work on a desktop browser. | Phase 1 §2 assumptions |
+| Who | A University of Botswana student who needs registration assistance (for example course registration or a registration enquiry), especially in busy registration periods. | Phase 1  and 2 stakeholders |
+| Needs | A convenient way to get registration help without spending long periods in a physical line; to know when they will be served. | Phase 1 and 2 (need, concern) |
+| Main frustration | Long waiting and uncertainty about when they will be served; waiting interferes with classes and study. | Phase 1 and 2 problem statement |
+| Device | A phone, computer or other internet-enabled device. Mostly a phone **(assumption)**, so the design is mobile-first and must also work on a desktop browser. | Phase 1 and 2 assumptions |
 | Experience | Often a first-time user of the system, with no training (QS-05 context); comfortable with common apps but not with this one. | QS-05 |
 | Context of use | At or near the registration service point, possibly standing, one hand on the phone, in daylight or a crowded corridor **(assumption)**. Interrupted easily, so state must survive leaving the screen. | **(assumption)** |
 | Constraints | Time pressure; may have patchy or costly data **(assumption)**, so screens must be light and recover from lost connections. | **(assumption)** |
@@ -107,13 +105,7 @@ stated in Phase 1.*
 | **Call next is disabled while a student is called at that counter**, with the reason shown | Allow calling again at any time | Prevents leaving a called record unresolved (UC-15 business rule: only a Called record at that counter can be completed). **Design assumption not stated in Phase 1; confirm with the team.** |
 | After a **booking conflict** the time list refreshes and the old selection is cleared | Keep the selection and retry the same slot | Matches the Lab 8 design (no retry of the same slot) and UC-06 exception 4a. |
 
-## Gap found while designing
 
-The Phase 1 state model lets a Queue Entry go **Waiting → Cancelled** "if the student leaves the
-queue voluntarily", but there is **no use case** for a student leaving a queue (UC-01 to UC-18).
-The queue-status wireframe includes a **Leave queue** action because a student with a long wait
-will want it. Before Phase 2, either add a use case (and a functional requirement) or remove the
-action. This also affects the logical data model's status values and the API.
 
 ## Traceability — screens to requirements
 

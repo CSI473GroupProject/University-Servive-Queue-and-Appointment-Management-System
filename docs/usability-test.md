@@ -18,8 +18,7 @@ wireframes, to find problems early and change the design.
 
 **Limit:** three people can reveal problems but cannot establish a rate. QS-05 asks that **at least
 90% of first-time users** complete queue joining **within 3 minutes**; that needs a larger sample on
-the built interface (Phase 2, Section 13). Report this check as evidence of *problems found*, not as
-proof that QS-05 is met.
+the built interface (Phase 2, Section 13).
 
 ## 2. Participants
 

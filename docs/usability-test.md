@@ -6,12 +6,6 @@
 **Prototype tested:** `prototype/wireframes-student.svg` and `prototype/wireframes-staff.svg`
 **Tasks:** A (join queue), B (book appointment), C (staff call next and complete) — see `docs/user-profile-and-tasks.md`
 
-> ## STATUS: PROTOCOL READY — RESULTS NOT YET RECORDED
-> Sections 1–3 and 7 are prepared. **Sections 4–6 and 8 are blank on purpose and must be filled in by
-> the team from what really happened in the session.** The lab marks "at least one design change
-> follows from observed user difficulty", so invented observations would be both dishonest and
-> self-defeating. Delete this banner once the results are in.
-
 ## 1. Purpose and limits
 A small, formative, task-based check of whether people can complete the named tasks on the
 wireframes, to find problems early and change the design.
@@ -45,10 +39,10 @@ One row per observation. **Severity:** 1 = small annoyance; 2 = hesitation or de
 
 | Participant | Task | Frame | What happened (exact action, words said, where they hesitated) | Severity |
 |---|---|---|---|---|
-|202204313 |A | | | |
-|202204313 |A| | | |
-|202204319 |B| | | |
-|202204319 |B| | | |
+|202204313 |A |queue status | | |
+|202204313 |B| Choose appointment time| | |
+|202204319 |A| | | |
+|202204319 |C| | | |
 |202105155 |C| | | |
 |202105155 |C| | | |
 
